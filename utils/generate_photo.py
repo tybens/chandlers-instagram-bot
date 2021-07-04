@@ -5,6 +5,8 @@ import io
 from bs4 import BeautifulSoup
 from PIL import Image
 
+from utils import read_scrape_data
+
 COORDS =[(93, 204), (303, 216), (31, 354), (250, 405)]
 
 COEFFS = [ 7.87970803e-01,  3.25694599e-01, -5.58891931e+02, -5.62940129e-02,
@@ -16,7 +18,7 @@ def download_image(url):
     return Image.open(io.BytesIO(requests.get(url).content)).convert(mode='RGBA')
 
 
-def generate_photo(album_url, username) -> io.BytesIO:
+def generate_photo(album_url, username) -> str:
     """ Generates the chandler album photo from the specific album url """
 
     # 'images/*' won't work when running as python command because of different pwd
@@ -43,7 +45,7 @@ def generate_photo(album_url, username) -> io.BytesIO:
     path = f"generated/{username}.jpg"
     bg.save(path, format='jpeg')
 
-    return True, path
+    return path
 
 
 def search(query):
@@ -73,7 +75,7 @@ def generate_photo_from_query(album_query, username):
 
 
     # generate the photo
-    _, path = generate_photo(data[0]["url"], username)
+    path = generate_photo(data[0]["url"], username)
 
     return True, path, data[0]["album"]
 
@@ -84,4 +86,5 @@ if __name__ == '__main__':
     # generate_photo(test_url, username)
 
     test_query = "to pimp a butterfly"
+
     generate_photo_from_query(test_query, username)

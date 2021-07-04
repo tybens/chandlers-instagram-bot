@@ -1,11 +1,13 @@
 import time
-import csv
-from csv import DictReader
 
 from decouple import config
 from instagrapi import Client
+from datetime import datetime
 
-from utils.generate_photo import generate_photo_from_query
+from utils.generate_photo import generate_photo
+from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
+from utils import read_scrape_data, read_posts_data
+
 
 def login() -> object:
 
@@ -13,7 +15,7 @@ def login() -> object:
 
     USERNAME = "chandlers_favorite_album"
     PASSWORD = config("PASSWORD")
-    NEW_DUMP = False # change to True on first run of the day I think
+    NEW_DUMP = False  # change to True on first run of the day I think
 
     if NEW_DUMP:
         cl.login(USERNAME, PASSWORD)
@@ -27,47 +29,70 @@ def login() -> object:
 
 def photo_upload(cl, path, caption) -> bool:
     """ Uploads a photo to instagram """
-    
+
     try:
-        cl.photo_upload(path, caption) # upload photo
+        cl.photo_upload(path, caption)  # upload photo
         return True
     except Exception as e:
         print("error", e)
         return False
 
 
-def main():
-    cl = login() # login
+def main(cl):
 
-    data = read_scrape_data()
+    data = read_posts_data()
+    try:
+        start_index = data.date_posted.to_list().index("")
+    except ValueError:
+        print("all posts in posts.csv have been posted!")
+        return
 
-    for i, photo_data in enumerate(data):
-        username = photo_data["username"]
-        album_query = photo_data["album_query"]
+    posts = 0
+    for index, post_data in data.iloc[start_index:].iterrows():
+        username = post_data["username"]
+        album = post_data["album"]
+        artist = post_data["artist"]
+        url = post_data["url"]
 
         # can only post 25 posts per 24 hours
-        if i > 24:
+        if posts > 24:
             return
-        
-        # generate the photo 
-        success, path, album_name = generate_photo_from_query(album_query, username)
-        
-        if success:
-            # generate caption
-            caption = f"{album_name} requested by @{username}"
 
-            # if successful generation, upload it
-            if success: photo_upload(cl, path, caption)
-            print(f"{i} uploaded query: {album_query} \t thanks to username: {username}")
-            time.sleep(5) # wait 5 seconds
+        # generate the photo and caption
+        path = generate_photo(url, username)
+        artist_nospace = artist.replace(" ", "")
+        caption = f"{album} by {artist} as requested by {username} \n - \n @friends @mattyperry4 #friends #matthewperry #friendsmemes #chandlerbing #music #album #song #band #rock #country #electronic #pop #punk #rap #hiphop #musicalbum #musicmemes #memes #chandler{artist_nospace}"
+       
+        # if successful generation, upload it
+        photo_upload(cl, path, caption)
+        posts += 1  # iterate posts
+        print(f"{index} uploaded album: {album} \t thanks to username: {username}")
 
-    cl.account_change_picture(path)
+        # wait 5 seconds
+        time.sleep(5)
 
-def read_scrape_data():
-    with open('comments.csv', 'r') as read_obj: # read csv file as a list of lists
-        dict_reader = DictReader(read_obj) # pass the file object to reader() to get the reader object
-        data = list(dict_reader)
-    return data
+    # change account picture to be the most recent post
+    try:
+        cl.account_change_picture(path)
+    except:
+        pass
+
+    # re-save the posts csv to have the date_posted on it
+    data.loc[start_index:start_index+25, "date_posted"] = str(datetime.now())
+    data.to_csv("data/posts.csv")
+    return
+
 
 if __name__ == "__main__":
-    main()
+    # actions: "scrape_posts", "scrape_comments", "post"
+    ACTION = "post"
+
+    cl = login()  # login
+
+    if ACTION == "scrape_posts":
+        generate_posts_data_from_scrape_data()
+    elif ACTION == "scrape_comments":
+        POST_URL = "https://www.instagram.com/p/CEmZFT0lzxk/"
+        scrape_for_albums(cl, POST_URL)
+    elif ACTION == "post":
+        main(cl)
