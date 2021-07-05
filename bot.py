@@ -56,17 +56,20 @@ def main(cl):
 
         # can only post 25 posts per 24 hours
         if posts > 24:
-            return
+            break
 
         # generate the photo and caption
         path = generate_photo(url, username)
         artist_nospace = artist.replace(" ", "")
-        caption = f"{album} by {artist} as requested by {username} \n - \n @friends @mattyperry4 #friends #matthewperry #friendsmemes #chandlerbing #music #album #song #band #rock #country #electronic #pop #punk #rap #hiphop #musicalbum #musicmemes #memes #chandler{artist_nospace}"
+        # this caption kept getting me flagged for spamming 
+        # caption = f"{album} by {artist} as requested by {username} \n - \n @friends @mattyperry4 #friends #matthewperry #friendsmemes #chandlerbing #music #album #song #band #rock #country #electronic #pop #punk #rap #hiphop #musicalbum #musicmemes #memes #chandler{artist_nospace}"
+        caption = f"{album} by {artist} as requested by {username}"
        
         # if successful generation, upload it
         photo_upload(cl, path, caption)
+        data.loc[index, "date_posted"] = str(datetime.now())
         posts += 1  # iterate posts
-        print(f"{index} uploaded album: {album} \t thanks to username: {username}")
+        print(f"{posts} uploaded album: {album} \t thanks to username: {username}")
 
         # wait 5 seconds
         time.sleep(5)
@@ -78,7 +81,6 @@ def main(cl):
         pass
 
     # re-save the posts csv to have the date_posted on it
-    data.loc[start_index:start_index+25, "date_posted"] = str(datetime.now())
     data.to_csv("data/posts.csv")
     return
 
