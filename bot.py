@@ -4,7 +4,7 @@ from decouple import config
 from instagrapi import Client
 from datetime import datetime
 
-from utils.generate_photo import generate_photo
+from utils.generate_photo import generate_photo, generate_photo_from_query
 from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
 from utils import read_scrape_data, read_posts_data
 
@@ -60,7 +60,7 @@ def main(cl):
 
         # generate the photo and caption
         path = generate_photo(url, username)
-        artist_nospace = artist.replace(" ", "")
+        # artist_nospace = artist.replace(" ", "")
         # this caption kept getting me flagged for spamming 
         # caption = f"{album} by {artist} as requested by {username} \n - \n @friends @mattyperry4 #friends #matthewperry #friendsmemes #chandlerbing #music #album #song #band #rock #country #electronic #pop #punk #rap #hiphop #musicalbum #musicmemes #memes #chandler{artist_nospace}"
         caption = f"{album} by {artist} as requested by {username}"
@@ -86,15 +86,20 @@ def main(cl):
 
 
 if __name__ == "__main__":
-    # actions: "scrape_posts", "scrape_comments", "post"
+    # actions: "scrape_posts", "scrape_comments", "post", "photoshop"
     ACTION = "post"
 
-    cl = login()  # login
 
     if ACTION == "scrape_posts":
         generate_posts_data_from_scrape_data()
     elif ACTION == "scrape_comments":
+        cl = login()  # login
         POST_URL = "https://www.instagram.com/p/CEmZFT0lzxk/"
         scrape_for_albums(cl, POST_URL)
     elif ACTION == "post":
+        cl = login()  # login
         main(cl)
+    elif ACTION == "photoshop":
+        username = "@test"
+        query = "lausse the cat"
+        generate_photo_from_query(query, username)

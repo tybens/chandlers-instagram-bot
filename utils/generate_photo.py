@@ -22,8 +22,8 @@ def generate_photo(album_url, username) -> str:
     """ Generates the chandler album photo from the specific album url """
 
     # 'images/*' won't work when running as python command because of different pwd
-    bg = Image.open('./images/chandler.png').convert(mode='RGBA')
-    fg = Image.open('./images/chandler_front.png').convert(mode='RGBA')
+    bg = Image.open('./images/large/chandler.png').convert(mode='RGBA')
+    fg = Image.open('./images/large/chandler_front.png').convert(mode='RGBA')
 
     album = download_image(album_url).resize((bg.width, bg.height), resample=Image.ANTIALIAS)
     # commented out to make chandler hold the placeholder
