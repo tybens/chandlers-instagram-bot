@@ -49,3 +49,4 @@ ipython_config.py
 # Personal
 experimentation.ipynb
 generated/
+dump.json

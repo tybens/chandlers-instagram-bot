@@ -1,4 +1,5 @@
 import time
+import argparse
 
 from decouple import config
 from instagrapi import Client
@@ -10,7 +11,7 @@ from utils import read_scrape_data, read_posts_data
 
 
 def login() -> object:
-
+    """ Uses instagrapi to get a logged-in client for ig api interaction """
     cl = Client()
 
     USERNAME = "chandlers_favorite_album"
@@ -39,7 +40,10 @@ def photo_upload(cl, path, caption) -> bool:
 
 
 def main(cl):
-
+    """ The main posting functionality 
+    
+    Needs a csv with post data inside to be able to post
+    """
     data = read_posts_data()
     try:
         start_index = data.date_posted.to_list().index("")
@@ -86,8 +90,12 @@ def main(cl):
 
 
 if __name__ == "__main__":
-    # actions: "scrape_posts", "scrape_comments", "post", "photoshop"
-    ACTION = "post"
+    """ actions: "scrape_posts", "scrape_comments", "post", "photoshop" """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ACTION", "-a", type=str, help="str of which action to do. 'p' for post, 'sp' for scrape posts, 'sc' for scrape comments, 'ps' for photoshop")
+    args = parser.parse_args()
+    action_mapper = {"p": "post", "sp": "scrape_posts", "sc": "scrape_comments", "ps": "photoshop"}
+    ACTION = action_mapper[args.ACTION]
 
 
     if ACTION == "scrape_posts":

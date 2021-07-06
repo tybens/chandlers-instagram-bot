@@ -2,3 +2,4 @@ instagrapi
 decouple
 bs4
 PIL
+pandas
