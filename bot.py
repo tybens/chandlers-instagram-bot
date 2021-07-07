@@ -4,6 +4,8 @@ import argparse
 from decouple import config
 from instagrapi import Client
 from datetime import datetime
+import wikipedia
+from googlesearch import search
 
 from utils.generate_photo import generate_photo, generate_photo_from_query
 from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
@@ -67,7 +69,13 @@ def main(cl):
         # artist_nospace = artist.replace(" ", "")
         # this caption kept getting me flagged for spamming 
         # caption = f"{album} by {artist} as requested by {username} \n - \n @friends @mattyperry4 #friends #matthewperry #friendsmemes #chandlerbing #music #album #song #band #rock #country #electronic #pop #punk #rap #hiphop #musicalbum #musicmemes #memes #chandler{artist_nospace}"
-        caption = f"{album} by {artist} as requested by {username}"
+        try:
+            summary = wikipedia.summary(album+ " (album)", sentences=3)
+        except:
+            summary = ""
+        thisSearch = search(artist + " Instagram")[0]
+        handle = thisSearch.split("/")[-2] if "instagram" in thisSearch else ""
+        caption = f"{album} by {artist} as requested by {username} \n - \n " + summary + f" \n - \n@{handle} @friends @mattyperry4 #{artist} #music #record #album #chandler{artist}"
        
         # if successful generation, upload it
         photo_upload(cl, path, caption)
@@ -102,7 +110,8 @@ if __name__ == "__main__":
         generate_posts_data_from_scrape_data()
     elif ACTION == "scrape_comments":
         cl = login()  # login
-        POST_URL = "https://www.instagram.com/p/CEmZFT0lzxk/"
+        POST_URL = "https://www.instagram.com/p/CD4lCOMHJiX/"
+        
         scrape_for_albums(cl, POST_URL)
     elif ACTION == "post":
         cl = login()  # login

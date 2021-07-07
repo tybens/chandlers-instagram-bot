@@ -50,3 +50,4 @@ ipython_config.py
 experimentation.ipynb
 generated/
 dump.json
+images/*/*.xcf
