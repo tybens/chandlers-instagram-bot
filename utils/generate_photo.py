@@ -5,8 +5,6 @@ import io
 from bs4 import BeautifulSoup
 from PIL import Image
 
-from utils import read_scrape_data
-
 COORDS =[(93, 204), (303, 216), (31, 354), (250, 405)]
 
 COEFFS = [ 7.87970803e-01,  3.25694599e-01, -5.58891931e+02, -5.62940129e-02,

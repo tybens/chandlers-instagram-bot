@@ -1,8 +1,12 @@
 import csv
 import re
 
-from . import read_scrape_data, clean_posts_data
+import pandas as pd
+import numpy as np
+
+from . import read_comments_data, clean_posts_data
 from .generate_photo import search
+
 
 def scrape_for_albums(cl, post_url):
     """ Scrapes a chandler_holding_ur_fav_album post_id for people requesting albums """
@@ -13,9 +17,7 @@ def scrape_for_albums(cl, post_url):
     #     }
     # ]
 
-    file = open("data/comments.csv", "w+")
-    writer = csv.writer(file)
-    writer.writerow(["username", "query"])
+    df = pd.read_csv("data/comments.csv")
 
     media_id = cl.media_id(cl.media_pk_from_url(post_url))
     comments = cl.media_comments(media_id)
@@ -23,9 +25,11 @@ def scrape_for_albums(cl, post_url):
     for comment in comments:
         query = filter_for_query(comment.text)
         if query:
-            writer.writerow([comment.user.username, query])
+            df = df.append({'username': comment.user.username, 'query': query}, ignore_index=True)
 
-    return 
+    df.to_csv("data/comments.csv", index=False)
+    return
+
 
 def filter_for_query(text):
     checks = ["by", "-"]
@@ -35,34 +39,39 @@ def filter_for_query(text):
             try:
                 split = text.split(" ")
                 index = split.index(check)
-                ret = " ".join([split[index-1].lower() if split[index-1].lower() != "album" else split[index-2].lower(), split[index+1].lower()])
+                ret = " ".join([split[index-1].lower() if split[index-1].lower()
+                               != "album" else split[index-2].lower(), split[index+1].lower()])
             except:
                 continue
-    ret = re.sub(r'\W', '', ret) # replace special characters with nothing
+    # replace special characters with nothing
+    ret = re.sub(r'[^a-zA-Z0-9\s]', '', ret)
     return ret
+
 
 def generate_posts_data_from_scrape_data():
     """ generates a jpeg file in `images/{username}.jpg` from the first result of the album query """
 
-    file = open("data/posts.csv", "a+")
-    writer = csv.writer(file)
-    writer.writerow(["username", "album", "url", "artist", "date_posted"])
+    df = pd.read_csv("data/posts.csv", index_col=0)
+    # writer.writerow(["username", "album", "url", "artist", "date_posted"])
 
     # read scrape data
-    scrape_data = read_scrape_data()
+    scrape_data = read_comments_data()
 
-    for row in scrape_data:
+    for _, row in scrape_data.iterrows():
         # search the query
-        data = search(row["query"])
+        data = search(row.query)
         # if the query returned data
         if len(data) != 0:
             # write all the info we need for a post to a csv file
-            writer.writerow([row["username"], data[0]["album"], data[0]["url"], data[0]["artist"], ""])
-    
+            df = df.append({"username": "@"+row.username, "album": data[0]["album"], "artist": data[0]["artist"], "date_posted": np.NaN,
+                           "url": data[0]["url"]}, ignore_index=True)
+
+
     # clean the posts data
-    clean_posts_data()
+    clean_posts_data(df)
 
     return
+
 
 if __name__ == "__main__":
     from bot import login
@@ -75,7 +84,3 @@ if __name__ == "__main__":
     # scrape_for_albums(cl, POST_URL)
 
     generate_posts_data_from_scrape_data()
-
-
-
-

@@ -9,7 +9,7 @@ from googlesearch import search
 
 from utils.generate_photo import generate_photo, generate_photo_from_query
 from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
-from utils import read_scrape_data, read_posts_data
+from utils import read_comments_data, read_posts_data
 
 
 def login() -> object:
@@ -43,7 +43,7 @@ def photo_upload(cl, path, caption) -> bool:
 
 def main(cl):
     """ The main posting functionality 
-    
+
     Needs a csv with post data inside to be able to post
     """
     data = read_posts_data()
@@ -66,17 +66,18 @@ def main(cl):
 
         # generate the photo and caption
         path = generate_photo(url, username)
-        # artist_nospace = artist.replace(" ", "")
-        # this caption kept getting me flagged for spamming 
+        # this caption kept getting me flagged for spamming
         # caption = f"{album} by {artist} as requested by {username} \n - \n @friends @mattyperry4 #friends #matthewperry #friendsmemes #chandlerbing #music #album #song #band #rock #country #electronic #pop #punk #rap #hiphop #musicalbum #musicmemes #memes #chandler{artist_nospace}"
         try:
-            summary = wikipedia.summary(album+ " (album)", sentences=3)
+            summary = wikipedia.summary(album + " (album)", sentences=2)
         except:
             summary = ""
         thisSearch = search(artist + " Instagram")[0]
         handle = thisSearch.split("/")[-2] if "instagram" in thisSearch else ""
-        caption = f"{album} by {artist} as requested by {username} \n - \n " + summary + f" \n - \n@{handle} @friends @mattyperry4 #{artist} #music #record #album #chandler{artist}"
-       
+        artist_nospace = artist.replace(" ", "")
+        caption = f"{album} by {artist} as requested by {username} \n - \n" + summary + \
+            f" \n - \n@{handle} @friends #{artist_nospace} #photoshop #record #album #chandler{artist_nospace}"
+
         # if successful generation, upload it
         photo_upload(cl, path, caption)
         data.loc[index, "date_posted"] = str(datetime.now())
@@ -100,19 +101,26 @@ def main(cl):
 if __name__ == "__main__":
     """ actions: "scrape_posts", "scrape_comments", "post", "photoshop" """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ACTION", "-a", type=str, help="str of which action to do. 'p' for post, 'sp' for scrape posts, 'sc' for scrape comments, 'ps' for photoshop")
+    parser.add_argument("--ACTION", "-a", type=str,
+                        help="str of which action to do. 'p' for post, 'sp' for scrape posts, 'sc' for scrape comments, 'ps' for photoshop")
     args = parser.parse_args()
-    action_mapper = {"p": "post", "sp": "scrape_posts", "sc": "scrape_comments", "ps": "photoshop"}
+    action_mapper = {"p": "post", "sp": "scrape_posts",
+                     "sc": "scrape_comments", "ps": "photoshop"}
     ACTION = action_mapper[args.ACTION]
-
 
     if ACTION == "scrape_posts":
         generate_posts_data_from_scrape_data()
     elif ACTION == "scrape_comments":
         cl = login()  # login
-        POST_URL = "https://www.instagram.com/p/CD4lCOMHJiX/"
-        
-        scrape_for_albums(cl, POST_URL)
+        URL = "https://www.instagram.com/p/"
+        POST_IDS = ["CD4eKpFj748/", "CD4XVTznCKN/", "CD4Jm-5lPTS/",
+                    "CD4Cy_rBviZ/", "CD3733IFP_B/", "CD31AO8HJyc/", "CD3vLmfl4dw/",
+                    "CBLhdPlpt-P/", "CBI8qbjJg2R/", "CA04jO2n_pW/", "CAyTxCEFZyX/",
+                    "CAxc6Ownqyx/", "CAu4DWjnG11/", "CAsuz-UHQ-e/", "CAoAmFXgTp3/",
+                    "CAipRRDgIpo/", "CAYWF2dg6qq/", "CATn9ZdHmjb/", "CATMgdDHPay/",
+                    "CAOC7C_AeSS/", "CALeIRnDk6V/", "CAI5UqiBKR0/"]
+        for ID in POST_IDS:
+            scrape_for_albums(cl, URL+ID)
     elif ACTION == "post":
         cl = login()  # login
         main(cl)
