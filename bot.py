@@ -112,15 +112,10 @@ if __name__ == "__main__":
         generate_posts_data_from_scrape_data()
     elif ACTION == "scrape_comments":
         cl = login()  # login
-        URL = "https://www.instagram.com/p/"
-        POST_IDS = ["CD4eKpFj748/", "CD4XVTznCKN/", "CD4Jm-5lPTS/",
-                    "CD4Cy_rBviZ/", "CD3733IFP_B/", "CD31AO8HJyc/", "CD3vLmfl4dw/",
-                    "CBLhdPlpt-P/", "CBI8qbjJg2R/", "CA04jO2n_pW/", "CAyTxCEFZyX/",
-                    "CAxc6Ownqyx/", "CAu4DWjnG11/", "CAsuz-UHQ-e/", "CAoAmFXgTp3/",
-                    "CAipRRDgIpo/", "CAYWF2dg6qq/", "CATn9ZdHmjb/", "CATMgdDHPay/",
-                    "CAOC7C_AeSS/", "CALeIRnDk6V/", "CAI5UqiBKR0/"]
-        for ID in POST_IDS:
-            scrape_for_albums(cl, URL+ID)
+        mediaIds = [media.id for media in cl.user_medias(cl.user_id_from_username('chandler_holding_ur_fav_album'), 1000)]
+      
+        for ID in mediaIds:
+            scrape_for_albums(cl, ID)
     elif ACTION == "post":
         cl = login()  # login
         main(cl)

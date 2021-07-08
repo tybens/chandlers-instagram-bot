@@ -8,7 +8,7 @@ from . import read_comments_data, clean_posts_data
 from .generate_photo import search
 
 
-def scrape_for_albums(cl, post_url):
+def scrape_for_albums(cl, media_id):
     """ Scrapes a chandler_holding_ur_fav_album post_id for people requesting albums """
     # data = [
     #     {
@@ -18,10 +18,11 @@ def scrape_for_albums(cl, post_url):
     # ]
 
     df = pd.read_csv("data/comments.csv")
-
-    media_id = cl.media_id(cl.media_pk_from_url(post_url))
-    comments = cl.media_comments(media_id)
-
+    try:
+        comments = cl.media_comments(media_id)
+    except:
+        comments = []
+        
     for comment in comments:
         query = filter_for_query(comment.text)
         if query:
