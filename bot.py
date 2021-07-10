@@ -18,7 +18,7 @@ def login() -> object:
 
     USERNAME = "chandlers_favorite_album"
     PASSWORD = config("PASSWORD")
-    NEW_DUMP = False  # change to True on first run of the day I think
+    NEW_DUMP = True  # change to True on first run of the day I think
 
     if NEW_DUMP:
         cl.login(USERNAME, PASSWORD)
@@ -69,7 +69,7 @@ def main(cl):
         # this caption kept getting me flagged for spamming
         # caption = f"{album} by {artist} as requested by {username} \n - \n @friends @mattyperry4 #friends #matthewperry #friendsmemes #chandlerbing #music #album #song #band #rock #country #electronic #pop #punk #rap #hiphop #musicalbum #musicmemes #memes #chandler{artist_nospace}"
         try:
-            summary = wikipedia.summary(album + " (album)", sentences=2)
+            summary = wikipedia.summary(album + f" ({artist} album)", sentences=2)
         except:
             summary = ""
         thisSearch = search(artist + " Instagram")[0]

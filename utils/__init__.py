@@ -27,4 +27,9 @@ def clean_posts_data(df):
     # so that we don't have duplicated urls that have already been posted
     df_new.drop_duplicates(subset=["url"], keep="first")
     df_new = df_new.sort_values("date_posted", ascending=True, na_position="last").reset_index(drop=True)
+    df_new['username'] = df_new.username.apply(lambda x: ', '.join(set(x.split(', '))))
     df_new.to_csv("data/posts.csv")  # write data
+
+def change_caption(cl, post_url, new_caption):
+    media_pk = cl.media_pk_from_url(post_url)
+    cl.media_edit(media_pk, new_caption)
