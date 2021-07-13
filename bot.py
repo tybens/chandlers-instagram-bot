@@ -1,5 +1,6 @@
 import time
 import argparse
+import os
 
 from decouple import config
 from instagrapi import Client
@@ -11,15 +12,15 @@ from utils.generate_photo import generate_photo, generate_photo_from_query
 from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
 from utils import read_comments_data, read_posts_data
 
-# variables
-TOTAL_POSTS = 10 # max 25 I think
-
-def login() -> object:
+def login(production=False) -> object:
     """ Uses instagrapi to get a logged-in client for ig api interaction """
     cl = Client()
 
     USERNAME = "chandlers_favorite_album"
-    PASSWORD = config("PASSWORD")
+    if production: 
+        PASSWORD = os.environ.get("PASSWORD")
+    else:
+        PASSWORD = config("PASSWORD")
     NEW_DUMP = True  # change to True on first run of the day I think
 
     if NEW_DUMP:
@@ -43,7 +44,7 @@ def photo_upload(cl, path, caption) -> bool:
         return False
 
 
-def main(cl):
+def main(cl, TOTAL_POSTS):
     """ The main posting functionality 
 
     Needs a csv with post data inside to be able to post
@@ -119,8 +120,9 @@ if __name__ == "__main__":
         for ID in mediaIds:
             scrape_for_albums(cl, ID)
     elif ACTION == "post":
+        TOTAL_POSTS = 10 # max 25 I think
         cl = login()  # login
-        main(cl)
+        main(cl, TOTAL_POSTS)
     elif ACTION == "photoshop":
         username = "@test"
         query = "lausse the cat"
