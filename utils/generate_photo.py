@@ -1,6 +1,8 @@
 import requests
 import re
 import io
+import random
+import string
 
 from bs4 import BeautifulSoup
 from PIL import Image
@@ -40,7 +42,10 @@ def generate_photo(album_url, username) -> str:
     bg = Image.alpha_composite(bg, fg).convert("RGB")
     output = io.BytesIO()
     output.seek(0)
-    path = f"generated/{username}.jpg"
+
+    token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+    
+    path = f"generated/{token}.jpg"
     bg.save(path, format='jpeg')
 
     return path

@@ -11,6 +11,8 @@ from utils.generate_photo import generate_photo, generate_photo_from_query
 from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
 from utils import read_comments_data, read_posts_data
 
+# variables
+TOTAL_POSTS = 10 # max 25 I think
 
 def login() -> object:
     """ Uses instagrapi to get a logged-in client for ig api interaction """
@@ -61,7 +63,7 @@ def main(cl):
         url = post_data["url"]
 
         # can only post 25 posts per 24 hours
-        if posts > 24:
+        if posts > TOTAL_POSTS:
             break
 
         # generate the photo and caption

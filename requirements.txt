@@ -3,3 +3,6 @@ decouple
 bs4
 PIL
 pandas
+numpy
+wikipedia
+googlesearch-python
