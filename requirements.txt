@@ -1,8 +1,7 @@
 instagrapi
 decouple
 bs4
-PIL
 pandas
-numpy
+Pillow
 wikipedia
 googlesearch-python

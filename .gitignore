@@ -52,3 +52,6 @@ experimentation.ipynb
 generated/
 dump.json
 images/*/*.xcf
+deploymentvirtualenv/
+deploymentpackage.zip
+aws-python-scheduled-cron-project/

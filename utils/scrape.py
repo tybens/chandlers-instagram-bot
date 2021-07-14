@@ -2,7 +2,6 @@ import csv
 import re
 
 import pandas as pd
-import numpy as np
 
 from . import read_comments_data, clean_posts_data
 from .generate_photo import search
@@ -64,7 +63,7 @@ def generate_posts_data_from_scrape_data():
         # if the query returned data
         if len(data) != 0:
             # write all the info we need for a post to a csv file
-            df = df.append({"username": "@"+row.username, "album": data[0]["album"], "artist": data[0]["artist"], "date_posted": np.NaN,
+            df = df.append({"username": "@"+row.username, "album": data[0]["album"], "artist": data[0]["artist"], "date_posted": "_",
                            "url": data[0]["url"]}, ignore_index=True)
 
 

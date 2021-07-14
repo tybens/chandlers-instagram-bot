@@ -26,7 +26,7 @@ def clean_posts_data(df):
         x)), "album": "first", "artist": "first", "date_posted": "first", "url": "first"}).reset_index(drop=True)
     # so that we don't have duplicated urls that have already been posted
     df_new.drop_duplicates(subset=["url"], keep="first")
-    df_new = df_new.sort_values("date_posted", ascending=True, na_position="last").reset_index(drop=True)
+    df_new = df_new.sort_values("date_posted", ascending=True).reset_index(drop=True)
     df_new['username'] = df_new.username.apply(lambda x: ', '.join(set(x.split(', '))))
     df_new.to_csv("data/posts.csv")  # write data
 

@@ -7,8 +7,24 @@ Some of this code is adopted from my other repo [chandlers-favorite-album](https
 
 #### Example command:
 
-Post bot post. Chandler instagram bot will post 24 posts found in `data/posts.csv` as long as they don't have a `date_posted` data point
+Bot will post. Chandler instagram bot will post 24 posts found in `data/posts.csv` as long as they don't have a `date_posted` data point
 
 ```Bash
 python bot.py -a=p
 ```
+
+#### To deploy to aws lambda
+
+This zips the contents to `../zipfile.zip`. Which can be uploaded to an aws lambda instance.
+
+```Bash
+serverless # initializes as a serverless repo
+sls plugin install -n serverless-python-requirements # lets me bundle the python requirements
+sls deploy
+```
+
+##### useful links
+- https://www.serverless.com/framework/docs/providers/aws/guide/credentials/
+- https://www.serverless.com/plugins/serverless-python-requirements
+- https://stackoverflow.com/questions/53824556/how-to-install-numpy-and-pandas-for-aws-lambdas
+- 
