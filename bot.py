@@ -25,7 +25,7 @@ def login(production=False) -> object:
 
     if NEW_DUMP:
         cl.login(USERNAME, PASSWORD)
-        cl.dump_settings('./dump.json')
+        # cl.dump_settings('./dump.json')
     else:
         cl.load_settings("./dump.json")
         cl.login(USERNAME, PASSWORD)
@@ -120,7 +120,7 @@ if __name__ == "__main__":
         for ID in mediaIds:
             scrape_for_albums(cl, ID)
     elif ACTION == "post":
-        TOTAL_POSTS = 10 # max 25 I think
+        TOTAL_POSTS = 4 # max 25 I think
         cl = login()  # login
         main(cl, TOTAL_POSTS)
     elif ACTION == "photoshop":
