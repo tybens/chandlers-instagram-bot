@@ -48,10 +48,12 @@ ipython_config.py
 .env
 
 # Personal
+env/
 experimentation.ipynb
+gcp/generated/
 generated/
 dump.json
 images/*/*.xcf
-deploymentvirtualenv/
-deploymentpackage.zip
-aws-python-scheduled-cron-project/
+**/*.zip
+.vscode/
+gcp/service_account_key.json

@@ -9,6 +9,7 @@ import wikipedia
 from googlesearch import search
 
 from utils.generate_photo import generate_photo, generate_photo_from_query
+from utils.generate_concise_posts import generate_concise_posts
 from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
 from utils import read_comments_data, read_posts_data
 
@@ -18,14 +19,14 @@ def login(production=False) -> object:
 
     USERNAME = "chandlers_favorite_album"
     if production: 
-        PASSWORD = os.environ.get("PASSWORD")
+        PASSWORD = os.environ.get("INSTA_PASSWORD")
     else:
-        PASSWORD = config("PASSWORD")
+        PASSWORD = config("INSTA_PASSWORD")
     NEW_DUMP = True  # change to True on first run of the day I think
 
     if NEW_DUMP:
         cl.login(USERNAME, PASSWORD)
-        # cl.dump_settings('./dump.json')
+        cl.dump_settings('./dump.json')
     else:
         cl.load_settings("./dump.json")
         cl.login(USERNAME, PASSWORD)
@@ -105,10 +106,10 @@ if __name__ == "__main__":
     """ actions: "scrape_posts", "scrape_comments", "post", "photoshop" """
     parser = argparse.ArgumentParser()
     parser.add_argument("--ACTION", "-a", type=str,
-                        help="str of which action to do. 'p' for post, 'sp' for scrape posts, 'sc' for scrape comments, 'ps' for photoshop")
+                        help="str of which action to do. 'p' for post, 'sp' for scrape posts, 'sc' for scrape comments, 'ps' for photoshop, 'gcp' for generate concise posts data (a one time thing)")
     args = parser.parse_args()
     action_mapper = {"p": "post", "sp": "scrape_posts",
-                     "sc": "scrape_comments", "ps": "photoshop"}
+                     "sc": "scrape_comments", "ps": "photoshop", "gcp": "generate_concise_posts"}
     ACTION = action_mapper[args.ACTION]
 
     if ACTION == "scrape_posts":
@@ -119,8 +120,10 @@ if __name__ == "__main__":
       
         for ID in mediaIds:
             scrape_for_albums(cl, ID)
+    elif ACTION == "generate_concise_posts":
+        generate_concise_posts()
     elif ACTION == "post":
-        TOTAL_POSTS = 4 # max 25 I think
+        TOTAL_POSTS = 3 # max 25 I think
         cl = login()  # login
         main(cl, TOTAL_POSTS)
     elif ACTION == "photoshop":

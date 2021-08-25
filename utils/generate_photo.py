@@ -5,7 +5,7 @@ import random
 import string
 
 from bs4 import BeautifulSoup
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 COORDS =[(93, 204), (303, 216), (31, 354), (250, 405)]
 
@@ -25,7 +25,10 @@ def generate_photo(album_url, username) -> str:
     bg = Image.open('./images/large/chandler.png').convert(mode='RGBA')
     fg = Image.open('./images/large/chandler_front.png').convert(mode='RGBA')
 
-    album = download_image(album_url).resize((bg.width, bg.height), resample=Image.ANTIALIAS)
+    try: 
+        album = download_image(album_url).resize((bg.width, bg.height), resample=Image.ANTIALIAS)
+    except UnidentifiedImageError:
+        return "Error"
     # commented out to make chandler hold the placeholder
     # album = Image.open('../../public/images/placeholder.png').convert(mode='RGBA')
     

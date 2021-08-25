@@ -1,9 +1,8 @@
 # Chandlers Instagram Bot
 
-Scrapes [@chandler_holding_ur_fav_album](https://www.instagram.com/chandler_holding_ur_fav_album/) for album requests, photoshops chandler to be holding the album, and posts the photo to [@chandlers_favorite_album](https://www.instagram.com/chandlers_favorite_album/) instagram page. 
+Scrapes [@chandler_holding_ur_fav_album](https://www.instagram.com/chandler_holding_ur_fav_album/) for album requests, photoshops chandler to be holding the album, and posts the photo to [@chandlers_favorite_album](https://www.instagram.com/chandlers_favorite_album/) instagram page.
 
 Some of this code is adopted from my other repo [chandlers-favorite-album](https://github.com/tybens/chandlers-favorite-album) which makes the website [chandlersfavoritealbum.com](https://chandlersfavoritealbum.com/)
-
 
 #### Example command:
 
@@ -13,18 +12,27 @@ Bot will post. Chandler instagram bot will post 24 posts found in `data/posts.cs
 python bot.py -a=p
 ```
 
-#### To deploy to aws lambda
+### To deploy to google cloud platform to run the script daily
 
-This zips the contents to `../zipfile.zip`. Which can be uploaded to an aws lambda instance.
+#### !! Data stored in `data/` is outdated and is now hosted on chandlers-instagram-bot firebase realtime database
+
+Uses gcloud command line. This deploys the function to google cloud functions, set to trigger on the trigger topic DAILY_POSTS.
 
 ```Bash
-serverless # initializes as a serverless repo
-sls plugin install -n serverless-python-requirements # lets me bundle the python requirements
-sls deploy
+gcloud functions deploy post_to_insta --trigger-topic DAILY_POSTS --runtime python39 --allow-unauthenticated
 ```
 
+Creates pubsub trigger topic DAILY_POSTS.
+
+```Bash
+gcloud pubsub topics create DAILY_POSTS
+```
+
+Go into google console to create a Cloud Scheduler job that triggers the function daily.
+
 ##### useful links
-- https://www.serverless.com/framework/docs/providers/aws/guide/credentials/
-- https://www.serverless.com/plugins/serverless-python-requirements
-- https://stackoverflow.com/questions/53824556/how-to-install-numpy-and-pandas-for-aws-lambdas
-- 
+
+- https://cloud.google.com/functions/docs/writing/background
+- https://cloud.google.com/functions/docs/calling/pubsub
+- https://cloud.google.com/functions/docs/quickstart-python
+- https://www.cloudsavvyit.com/4975/how-to-run-gcp-cloud-functions-periodically-with-cloud-scheduler/
