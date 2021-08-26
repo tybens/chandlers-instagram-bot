@@ -1,15 +1,15 @@
 import os
-
 from datetime import datetime
-# from google.cloud import firestore
+
 import firebase_admin
 from firebase_admin import credentials, db
 from instagrapi import Client
 from instagrapi.types import Usertag
 
+from utils import challenge_code_handler 
+
 # Fetch the service account key JSON file contents
 cred = credentials.Certificate('./service_account_key.json')
-
 # Initialize the app with a service account, granting admin privileges
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://chandlers-instagram-bot-default-rtdb.firebaseio.com/',
@@ -19,7 +19,6 @@ firebase_admin.initialize_app(cred, {
 def post_to_insta(event=None, context=None):
     # instagram client
     cl = login()
-
     # get the reference to the first 4 posts that haven't been posted
     ref = db.reference('posts')
     snapshot = ref.order_by_child('date_posted').equal_to(
@@ -38,7 +37,8 @@ def post_to_insta(event=None, context=None):
         # update date posted to now
         ref.child(key).update({'date_posted': str(datetime.now())})
 
-        if i == 3: cl.account_change_picture(val['path_to_pic'])
+        if i == 3:
+            cl.account_change_picture(val['path_to_pic'])
 
     return f'Success'
 
@@ -46,6 +46,7 @@ def post_to_insta(event=None, context=None):
 def login(production=False) -> object:
     """ Uses instagrapi to get a logged-in client for ig api interaction """
     cl = Client()
+    cl.challenge_code_handler = challenge_code_handler
 
     USERNAME = "chandlers_favorite_album"
     PASSWORD = os.environ.get("INSTA_PASSWORD")
