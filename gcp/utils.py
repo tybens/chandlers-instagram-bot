@@ -6,8 +6,10 @@ import re
 
 def get_code_from_email(username):
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
-    mail.login(os.environ.get("CHALLENGE_EMAIL"),
-               os.environ.get("CHALLENGE_PASSWORD"))
+    USERNAME = "chandlersfavoritealbum@gmail.com"
+    PASSWORD = os.environ.get("CHALLENGE_PASSWORD")
+    mail.login(USERNAME, PASSWORD)
+    
     mail.select("inbox")
     result, data = mail.search(None, "(UNSEEN)")
     assert result == "OK", "Error1 during get_code_from_email: %s" % result

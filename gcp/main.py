@@ -6,7 +6,7 @@ from firebase_admin import credentials, db
 from instagrapi import Client
 from instagrapi.types import Usertag
 
-from utils import challenge_code_handler 
+from utils import challenge_code_handler
 
 # Fetch the service account key JSON file contents
 cred = credentials.Certificate('./service_account_key.json')
@@ -57,5 +57,6 @@ def login(production=False) -> object:
 
 
 if __name__ == "__main__":
+    # print(challenge_code_handler('chandlers_favorite_album', 1))
     post_to_insta()
     # gcloud functions deploy post_to_insta --trigger-topic DAILY_POSTS --runtime python39 --allow-unauthenticated
