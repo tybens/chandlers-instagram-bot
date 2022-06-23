@@ -123,7 +123,7 @@ if __name__ == "__main__":
     elif ACTION == "generate_concise_posts":
         generate_concise_posts()
     elif ACTION == "post":
-        TOTAL_POSTS = 3 # max 25 I think
+        TOTAL_POSTS = 1 # max 25 I think
         cl = login()  # login
         main(cl, TOTAL_POSTS)
     elif ACTION == "photoshop":

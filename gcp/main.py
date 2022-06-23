@@ -22,7 +22,7 @@ def post_to_insta(event=None, context=None):
     # get the reference to the first 4 posts that haven't been posted
     ref = db.reference('posts')
     snapshot = ref.order_by_child('date_posted').equal_to(
-        '_').limit_to_first(3).get()
+        '_').limit_to_first(1).get()
 
     # iterate through and post them and update data point
     i = 0

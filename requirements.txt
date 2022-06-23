@@ -1,5 +1,5 @@
 instagrapi
-decouple
+python-decouple
 bs4
 pandas
 Pillow

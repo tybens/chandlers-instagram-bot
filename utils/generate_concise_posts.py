@@ -4,7 +4,6 @@ from datetime import datetime
 import wikipedia
 from googlesearch import search
 import json
-from bot import login
 from utils import change_caption
 from utils.generate_photo import generate_photo, generate_photo_from_query
 from utils.scrape import generate_posts_data_from_scrape_data, scrape_for_albums
