@@ -6,7 +6,7 @@ Some of this code is adopted from my other repo [chandlers-favorite-album](https
 
 #### Example command:
 
-Bot will post. Chandler instagram bot will post 24 posts found in `data/posts.csv` as long as they don't have a `date_posted` data point
+Bot will post. Chandler instagram bot will postposts found in `data/posts.csv` as long as they don't have a `date_posted` data point
 
 ```Bash
 python bot.py -a=p
